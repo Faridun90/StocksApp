@@ -2,8 +2,8 @@
 import { defineProps, defineEmits } from 'vue'
 const props = defineProps(['task'])
 const emit = defineEmits(['deleteTask'])
-const deleteTask = (taskIndex: number) => {
-  emit('deleteTask', taskIndex)
+const deleteTask = () => {
+  emit('deleteTask')
 }
 </script>
 
