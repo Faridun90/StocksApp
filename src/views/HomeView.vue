@@ -37,7 +37,9 @@ const deleteTask = (taskIndex: number) => {
         v-if="tasks.length > 0"
         class="bg-slate-800 mt-3 border-[2px] border-indigo-300 p-4 rounded-sm"
       >
-        <TodoItem :tasks="tasks" @deleteTask="deleteTask" />
+        <div v-for="task in tasks" :key="task" class="flex gap-1 items-center">
+          <TodoItem :task="task" @deleteTask="deleteTask" />
+        </div>
       </div>
       <div v-else class="bg-slate-800 mt-3 border-[2px] border-indigo-300 p-4 rounded-sm">
         There is no existing tasks!
