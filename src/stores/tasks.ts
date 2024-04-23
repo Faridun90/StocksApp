@@ -6,12 +6,23 @@ export const useTasksStore = defineStore({
   }),
   actions: {
     addTask(newTask: string) {
-      this.tasks.push(newTask)
-      console.log(this.tasks)
+      if (newTask.length > 0) {
+        this.tasks.push(newTask)
+        console.log(this.tasks)
+      } else {
+        console.log('Please provide a task!')
+      }
     },
 
     deleteTask(taskIndex: number) {
       this.tasks.splice(taskIndex, 1)
+    },
+    updateTask(taskIndex: number, newTask: string) {
+      if (newTask.length > 0) {
+        this.tasks.splice(taskIndex, 1, newTask)
+      } else {
+        console.log('Please provide an update or delete this task!')
+      }
     }
   }
 })

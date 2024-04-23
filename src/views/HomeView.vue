@@ -19,7 +19,11 @@ const addTask = (newTask: string) => {
 const deleteTask = (taskIndex: number) => {
   storeTasks.deleteTask(taskIndex)
 }
-
+const updateTask = (taskIndex: number, newTask: string) => {
+  storeTasks.updateTask(taskIndex, newTask)
+  console.log('This is a updated task ID:', taskIndex)
+  console.log('This is a updated task NAME:', newTask)
+}
 //1.Create a component for each list item
 //2.Use the same component, instead of passing data up-down, pass it globaly with Pinia
 </script>
@@ -27,10 +31,9 @@ const deleteTask = (taskIndex: number) => {
 <template>
   <main class="bg-black h-screen text-white">
     <div class="flex flex-col m-auto w-full h-full items-center">
-      <h1 class="mt-6">TO-DO App</h1>
+      <h1 class="mt-6 text-2xl font-bold">TO-DO App</h1>
 
-      <h1>{{ storeTasks.tasks }}</h1>
-      <div class="mt-6 flex flex-col gap-2">
+      <div class="mt-4 flex flex-col gap-2">
         <form class="mt-6 flex flex-col gap-2" @submit.prevent="addTask(todo)">
           <input
             type="text"
@@ -47,11 +50,15 @@ const deleteTask = (taskIndex: number) => {
         class="bg-slate-800 mt-3 border-[2px] border-indigo-300 p-4 rounded-sm"
       >
         <div v-for="(task, index) in tasks" :key="index" class="flex gap-1 items-center">
-          <TodoItem :value="task" @deleteValue="deleteTask(index)" />
+          <TodoItem
+            :value="task"
+            @deleteValue="deleteTask(index)"
+            @updateValue="updateTask(index, $event)"
+          />
         </div>
       </div>
       <div v-else class="bg-slate-800 mt-3 border-[2px] border-indigo-300 p-4 rounded-sm">
-        There is no existing tasks!
+        There is no existing tasks...
       </div>
     </div>
   </main>
