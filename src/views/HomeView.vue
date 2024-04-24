@@ -21,8 +21,6 @@ const deleteTask = (taskIndex: number) => {
 }
 const updateTask = (taskIndex: number, newTask: string) => {
   storeTasks.updateTask(taskIndex, newTask)
-  console.log('This is a updated task ID:', taskIndex)
-  console.log('This is a updated task NAME:', newTask)
 }
 //1.Create a component for each list item
 //2.Use the same component, instead of passing data up-down, pass it globaly with Pinia
