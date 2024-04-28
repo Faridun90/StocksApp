@@ -39,6 +39,11 @@ const updateTask = (taskIndex: number, newTask: string) => {
             v-model="todo"
             placeholder="Add a new task"
           />
+          <!-- <div>
+            <label for="important">Important</label>
+            <input type="checkbox" name="" id="important" />
+          </div> -->
+
           <button type="submit" class="bg-indigo-600 rounded-sm">Add</button>
         </form>
       </div>
