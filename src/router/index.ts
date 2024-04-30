@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/calculator',
       name: 'calculator',
       component: () => import('../views/CalculatorView.vue')
+    },
+    {
+      path: '/stocks',
+      name: 'stocks',
+      component: () => import('../views/BuyStocks.vue')
     }
   ]
 })

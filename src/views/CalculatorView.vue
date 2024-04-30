@@ -15,17 +15,16 @@ const flipSign = (value: string) => {
 const handlePercentage = (string: String) => {
   const regex = /[-+*/÷x]/
   const splitStep = string.split(regex)
-  console.log(splitStep)
+
   const percentage = splitStep[splitStep.length - 1].replace('%', '')
-  console.log(percentage)
+
   const numPercent = Number(percentage)
-  console.log(numPercent)
+
   const pow = numPercent / Math.pow(10, 2)
-  console.log(pow)
+
   const targetNum = splitStep[splitStep.length - 2]
-  console.log(targetNum)
+
   const target = Number(targetNum)
-  console.log(target)
 
   let res
   if (string.includes('+')) {
