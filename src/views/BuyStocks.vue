@@ -12,12 +12,15 @@ const stocksStore = useStocksStore()
 
 onMounted(async () => {
   try {
+    await initialize()
     response.value = await api.getStocks()
   } catch (error) {
     console.error('Error fetching stocks:', error)
   }
 })
-
+const initialize = async () => {
+  stocksStore.initialize()
+}
 const fetchStock = async () => {
   try {
     response2.value = await api.getStock(userInput.value)
