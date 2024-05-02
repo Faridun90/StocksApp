@@ -3,40 +3,72 @@ import { ref, onMounted } from 'vue'
 import { api } from '../utils/stockApi'
 import { type IAggsResults } from '@/models/polygonTypes'
 
+import { useStocksStore } from '@/stores/stocks'
+
 const userInput = ref('')
-const response = ref()
-const response2 = ref({} as IAggsResults)
+const response = ref<any[]>([])
+const response2 = ref<IAggsResults | null>(null)
+const stocksStore = useStocksStore()
 
 onMounted(async () => {
   try {
     response.value = await api.getStocks()
   } catch (error) {
-    console.error(error)
+    console.error('Error fetching stocks:', error)
   }
 })
 
 const fetchStock = async () => {
-  response2.value = await api.getStock(userInput.value)
+  try {
+    response2.value = await api.getStock(userInput.value)
+  } catch (error) {
+    console.error('Error fetching stock data:', error)
+  }
 }
 
-console.log(response2.value)
+const handleSelectChange = (event: Event) => {
+  userInput.value = (event.target as HTMLSelectElement).value
+}
+
+const buyStock = (stock: IAggsResults | null) => {
+  if (stock) {
+    stocksStore.buyStock(stock)
+  } else {
+    console.log('No stock selected.')
+  }
+}
 </script>
 
 <template>
   <div class="bg-black text-white flex flex-col py-10 mx-auto w-full h-screen items-center">
     <h1 class="text-4xl">Buy stocks</h1>
     <div class="flex flex-col py-3 px-3 border-2 w-2/4">
-      <h2 class="text-white" v-for="(ticker, index) in response" :key="index">
-        <div>{{ index + 1 }} - {{ ticker.ticker }}</div>
-      </h2>
+      <select v-model="userInput" @change="handleSelectChange" class="text-black">
+        <option
+          v-for="(stock, index) in response"
+          :key="index"
+          :value="stock.ticker"
+          class="text-black"
+        >
+          <span class="text-white">{{ stock.ticker }}</span>
+        </option>
+      </select>
     </div>
+    <!-- <div class="flex flex-col py-3 px-3 border-2 w-2/4">
+      <label for="searchStock"> Type the name of a Stock to search </label>
+      <input type="text" id="searchStock" v-model="searchTerm" placeholder="Type here..." />
+    </div> -->
 
     <form @submit.prevent="fetchStock" class="m-5 text-xl flex gap-2">
-      <input type="text" class="text-black" v-model="userInput" placeholder="Enter stock symbol" />
       <button type="submit" class="border-2 rounded-md text-lg p-1">Get Stock Data</button>
     </form>
-    <h2 class="text-yellow-300 text-2xl">
-      Price for 1 "{{ userInput }}" stock is : ${{ response2.c }}
-    </h2>
+    <div v-if="response2" class="flex flex-row gap-2">
+      <h2 class="text-yellow-300 text-2xl">
+        Price for 1 "{{ userInput }}" stock is : ${{ response2.c }}
+      </h2>
+      <form @submit.prevent="buyStock(response2)">
+        <button type="submit" class="border-2 rounded-md text-lg p-1 bg-green-400">BUY</button>
+      </form>
+    </div>
   </div>
 </template>
