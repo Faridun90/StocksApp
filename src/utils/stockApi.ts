@@ -13,7 +13,6 @@ export const api = {
     const ticker = await rest.stocks.previousClose(stock)
 
     if (ticker.results !== undefined) {
-      console.log(ticker.results[0])
       return ticker.results[0]
     }
     return {}

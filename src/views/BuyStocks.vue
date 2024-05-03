@@ -2,13 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { api } from '../utils/stockApi'
 import { type IAggsResults } from '@/models/polygonTypes'
-
 import { useStocksStore } from '@/stores/stocks'
 
 const userInput = ref('')
 const response = ref<any[]>([])
 const response2 = ref<IAggsResults | null>(null)
 const stocksStore = useStocksStore()
+const stockName = ref<string>('')
+const stockPrice = ref<number>(0)
 
 onMounted(async () => {
   try {
@@ -24,6 +25,12 @@ const initialize = async () => {
 const fetchStock = async () => {
   try {
     response2.value = await api.getStock(userInput.value)
+    if (response2.value.T && response2.value.c) {
+      stockName.value = response2.value.T
+      stockPrice.value = response2.value.c
+    }
+
+    console.log('Name', stockName.value, 'Price', stockPrice.value)
   } catch (error) {
     console.error('Error fetching stock data:', error)
   }
@@ -33,9 +40,10 @@ const handleSelectChange = (event: Event) => {
   userInput.value = (event.target as HTMLSelectElement).value
 }
 
-const buyStock = (stock: IAggsResults | null) => {
-  if (stock) {
-    stocksStore.buyStock(stock)
+const buyStock = () => {
+  const stockObj = { name: stockName.value, price: stockPrice.value }
+  if (stockObj) {
+    stocksStore.buyStock(stockObj)
   } else {
     console.log('No stock selected.')
   }
@@ -69,7 +77,7 @@ const buyStock = (stock: IAggsResults | null) => {
       <h2 class="text-yellow-300 text-2xl">
         Price for 1 "{{ userInput }}" stock is : ${{ response2.c }}
       </h2>
-      <form @submit.prevent="buyStock(response2)">
+      <form @submit.prevent="buyStock()">
         <button type="submit" class="border-2 rounded-md text-lg p-1 bg-green-400">BUY</button>
       </form>
     </div>
