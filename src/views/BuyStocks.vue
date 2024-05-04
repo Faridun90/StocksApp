@@ -10,6 +10,7 @@ const response2 = ref<IAggsResults | null>(null)
 const stocksStore = useStocksStore()
 const stockName = ref<string>('')
 const stockPrice = ref<number>(0)
+const stockQuantity = ref<number>(0)
 
 onMounted(async () => {
   try {
@@ -41,9 +42,15 @@ const handleSelectChange = (event: Event) => {
 }
 
 const buyStock = () => {
-  const stockObj = { name: stockName.value, price: stockPrice.value }
-  if (stockObj) {
+  const stockObj = {
+    name: stockName.value,
+    price: stockPrice.value,
+    quantity: stockQuantity.value,
+    boughtAt: new Date().toISOString()
+  }
+  if (stockObj && stockQuantity.value > 0) {
     stocksStore.buyStock(stockObj)
+    console.log(new Date().toISOString())
   } else {
     console.log('No stock selected.')
   }
@@ -73,10 +80,16 @@ const buyStock = () => {
     <form @submit.prevent="fetchStock" class="m-5 text-xl flex gap-2">
       <button type="submit" class="border-2 rounded-md text-lg p-1">Get Stock Data</button>
     </form>
-    <div v-if="response2" class="flex flex-row gap-2">
-      <h2 class="text-yellow-300 text-2xl">
-        Price for 1 "{{ userInput }}" stock is : ${{ response2.c }}
-      </h2>
+    <div v-if="response2" class="flex flex-col gap-2">
+      <div class="text-yellow-300 text-2xl">
+        Price for 1 <span class="text-green-400">"{{ userInput }}"</span> stock is :
+        <span class="text-green-400">${{ response2.c }}</span>
+      </div>
+      <div>
+        <h2 class="text-yellow-300 text-2xl">Quantity</h2>
+        <input type="number" class="text-black" v-model="stockQuantity" />
+      </div>
+
       <form @submit.prevent="buyStock()">
         <button type="submit" class="border-2 rounded-md text-lg p-1 bg-green-400">BUY</button>
       </form>
