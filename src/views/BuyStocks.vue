@@ -80,18 +80,20 @@ const buyStock = () => {
     <form @submit.prevent="fetchStock" class="m-5 text-xl flex gap-2">
       <button type="submit" class="border-2 rounded-md text-lg p-1">Get Stock Data</button>
     </form>
-    <div v-if="response2" class="flex flex-col gap-2">
+    <div v-if="response2" class="flex flex-col gap-2 bg-gray-700 p-2 rounded-md border-2">
       <div class="text-yellow-300 text-2xl">
         Price for 1 <span class="text-green-400">"{{ userInput }}"</span> stock is :
         <span class="text-green-400">${{ response2.c }}</span>
       </div>
-      <div>
-        <h2 class="text-yellow-300 text-2xl">Quantity</h2>
-        <input type="number" class="text-black" v-model="stockQuantity" />
+      <div class="flex gap-3">
+        <span class="text-yellow-300 text-2xl">Quantity</span>
+        <input type="number" class="text-black w-1/4" v-model="stockQuantity" />
       </div>
 
       <form @submit.prevent="buyStock()">
-        <button type="submit" class="border-2 rounded-md text-lg p-1 bg-green-400">BUY</button>
+        <button type="submit" class="border-2 rounded-md text-lg p-1 w-1/3 bg-green-400">
+          BUY
+        </button>
       </form>
     </div>
   </div>
