@@ -59,8 +59,13 @@ const buyStock = () => {
 
 <template>
   <div class="bg-black text-white flex flex-col py-10 mx-auto w-full h-screen items-center">
-    <h1 class="text-4xl">Buy stocks</h1>
-    <div class="flex flex-col py-3 px-3 border-2 w-2/4">
+    <h1 class="text-4xl mb-10">Buy stocks</h1>
+    <div>
+      <a href="/stocks/my-stocks">
+        <button class="border-2 rounded-md text-lg p-1">My Portfolio</button>
+      </a>
+    </div>
+    <div class="flex flex-col mt-6 py-3 px-3 border-2 w-2/4">
       <select v-model="userInput" @change="handleSelectChange" class="text-black">
         <option
           v-for="(stock, index) in response"
@@ -78,7 +83,9 @@ const buyStock = () => {
     </div> -->
 
     <form @submit.prevent="fetchStock" class="m-5 text-xl flex gap-2">
-      <button type="submit" class="border-2 rounded-md text-lg p-1">Get Stock Data</button>
+      <button type="submit" class="border-2 rounded-md text-lg p-1 bg-green-400">
+        Get Stock Data
+      </button>
     </form>
     <div v-if="response2" class="flex flex-col gap-2 bg-gray-700 p-2 rounded-md border-2">
       <div class="text-yellow-300 text-2xl">
