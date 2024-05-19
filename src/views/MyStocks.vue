@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStocksStore } from '@/stores/stocks'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import type { stockProfitObjProps } from '@/models/stockProfitTypes'
 
 const stocksStore = useStocksStore()
@@ -10,7 +10,7 @@ const profitSum = ref(0)
 
 onMounted(async () => {
   initialize()
-  getTodaysPrices()
+  await getTodaysPrices()
   comparePrices()
 })
 
@@ -40,14 +40,15 @@ const comparePrices = () => {
   stockProfits.value = profits
 }
 
-const overallProfit = () => {
-  let sum = 0
-  for (let i = 0; i < stockProfits.value.length; i++) {
-    sum += stockProfits.value[i].profit
-    sum = parseFloat(sum.toFixed(3))
+const overallProfit = computed(() => {
+  return stockProfits.value.reduce((sum, stock) => sum + stock.profit, 0).toFixed(3)
+})
+
+watch([myStocks, marketPrices], () => {
+  if (myStocks.length && marketPrices.length) {
+    comparePrices()
   }
-  return (profitSum.value = sum)
-}
+})
 </script>
 
 <template>
@@ -86,7 +87,7 @@ const overallProfit = () => {
       <h2>
         My Profit today is:
         <span :class="{ 'text-green-500': profitSum >= 0, 'text-red-500': profitSum < 0 }"
-          >${{ overallProfit() }}</span
+          >${{ overallProfit }}</span
         >
       </h2>
     </div>
