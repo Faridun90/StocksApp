@@ -61,7 +61,7 @@ const buyStock = () => {
   <div class="bg-black text-white flex flex-col py-10 mx-auto w-full h-screen items-center">
     <h1 class="text-4xl mb-10">Buy stocks</h1>
     <div>
-      <a href="/stocks/my-stocks">
+      <a href="/stocks/my-portfolio">
         <button class="border-2 rounded-md text-lg p-1">My Portfolio</button>
       </a>
     </div>

@@ -15,10 +15,6 @@ onMounted(async () => {
 })
 
 const comparePrices = () => {
-  console.log('Comparing prices...')
-  console.log('marketPrices:', marketPrices)
-  console.log('myStocks:', myStocks)
-
   const profits: stockProfitObjProps[] = myStocks
     .map((stock) => {
       const marketPrice = marketPrices.find((mp) => mp.name === stock.name)

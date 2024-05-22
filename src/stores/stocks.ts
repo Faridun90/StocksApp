@@ -20,10 +20,13 @@ export const useStocksStore = defineStore({
       localStorage.setItem('MyPortfolio', JSON.stringify(this.myStocks))
     },
     async getTodaysPrices() {
+      console.log('Inside of getTodaysPrices')
       const marketPrices: marketPriceObjProps[] = []
+      console.log('myStocks :', this.myStocks)
       for (const stock of this.myStocks) {
         try {
           const response = await api2.getStockNewPrice(stock.name)
+          console.log(response)
           if (response && response.data && response.data.c !== undefined) {
             const marketPriceObj: marketPriceObjProps = {
               name: stock.name,
@@ -46,6 +49,7 @@ export const useStocksStore = defineStore({
         for (let i = 0; i < parsedStocks.length; i++) {
           this.myStocks.push(parsedStocks[i])
         }
+        console.log('Intialized stocks', this.myStocks)
       }
 
       const savedMarketPrices = localStorage.getItem('MarketPrices')
@@ -54,6 +58,7 @@ export const useStocksStore = defineStore({
         for (let i = 0; i < parsedPrices.length; i++) {
           this.marketPrices.push(parsedPrices[i])
         }
+        console.log(savedMarketPrices)
       }
     }
   }
