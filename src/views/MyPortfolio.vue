@@ -2,11 +2,37 @@
 import { useStocksStore } from '@/stores/stocks'
 import { computed, onMounted, ref, watch } from 'vue'
 import type { stockProfitObjProps } from '@/models/stockProfitTypes'
+import type { stockObjProps } from '@/models/stockTypes'
 
 const stocksStore = useStocksStore()
-const { initialize, myStocks, marketPrices, getTodaysPrices } = stocksStore
+const { initialize, myTransactions, marketPrices, getTodaysPrices } = stocksStore
 const stockProfits = ref<stockProfitObjProps[]>([])
 const profitSum = ref(0)
+
+// Function to merge stocks with the same name
+function mergeStocks(stocks: stockObjProps[]): stockObjProps[] {
+  return Object.values(
+    stocks.reduce(
+      (acc, stock) => {
+        if (acc[stock.name]) {
+          const existingStock = acc[stock.name]
+
+          const totalQuantity = existingStock.quantity + stock.quantity
+
+          existingStock.price =
+            (existingStock.price * existingStock.quantity + stock.price * stock.quantity) /
+            totalQuantity
+
+          existingStock.quantity = totalQuantity
+        } else {
+          acc[stock.name] = { ...stock }
+        }
+        return acc
+      },
+      {} as { [key: string]: stockObjProps }
+    )
+  )
+}
 
 onMounted(async () => {
   initialize()
@@ -15,7 +41,8 @@ onMounted(async () => {
 })
 
 const comparePrices = () => {
-  const profits: stockProfitObjProps[] = myStocks
+  const mergedStocks = mergeStocks(myTransactions) // Merge stocks before comparing prices
+  const profits: stockProfitObjProps[] = mergedStocks
     .map((stock) => {
       const marketPrice = marketPrices.find((mp) => mp.name === stock.name)
       if (marketPrice) {
@@ -40,8 +67,8 @@ const overallProfit = computed(() => {
   return stockProfits.value.reduce((sum, stock) => sum + stock.profit, 0).toFixed(3)
 })
 
-watch([myStocks, marketPrices], () => {
-  if (myStocks.length && marketPrices.length) {
+watch([myTransactions, marketPrices], () => {
+  if (myTransactions.length && marketPrices.length) {
     comparePrices()
   }
 })
@@ -49,7 +76,7 @@ watch([myStocks, marketPrices], () => {
 
 <template>
   <div class="bg-black text-white flex flex-col py-10 mx-auto w-full h-screen items-center">
-    <h1 class="text-4xl mb-10">My Stocks</h1>
+    <h1 class="text-4xl mb-10">My Portfolio</h1>
     <div>
       <a href="/stocks">
         <button class="border-2 rounded-md text-lg p-1 bg-green-400">Buy Stocks</button>
@@ -61,9 +88,6 @@ watch([myStocks, marketPrices], () => {
           <h3 class="flex gap-2">
             <h4>Ticker:</h4>
             <span class="text-green-500">{{ stock.name }}</span>
-
-            <h4>Bought Price:</h4>
-            <span class="text-green-500">${{ stock.boughtPrice }}</span>
 
             <h4>Current Price:</h4>
             <span class="text-green-500">${{ stock.currentPrice }}</span>
@@ -86,6 +110,26 @@ watch([myStocks, marketPrices], () => {
           >${{ overallProfit }}</span
         >
       </h2>
+    </div>
+    <div class="mt-8 text-xl">
+      <h2>Transactions</h2>
+      <div class="border-2 p-2 bg-cyan-900 mt-2 text-lg">
+        <ul>
+          <li v-for="(stock, index) in myTransactions" :key="index">
+            <h3 class="flex gap-2">
+              <h4>Ticker:</h4>
+              <span class="text-green-500">{{ stock.name }}</span>
+              <h4>Qty:</h4>
+              <span class="text-red-500">{{ stock.quantity }}</span>
+              <h4>Price:</h4>
+              <span class="text-green-500">${{ stock.price }}</span>
+
+              <h4>Date:</h4>
+              <span class="text-green-500">{{ stock.boughtAt }}</span>
+            </h3>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>

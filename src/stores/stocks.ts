@@ -2,11 +2,17 @@ import { defineStore } from 'pinia'
 import type { stockObjProps } from '@/models/stockTypes'
 import type { marketPriceObjProps } from '@/models/marketPriceTypes'
 import { api2 } from '@/utils/finnhubApi'
+import { format, toZonedTime } from 'date-fns-tz'
+
+function getFormattedDate() {
+  const zonedDate = toZonedTime(new Date(), 'America/Los_Angeles')
+  return format(zonedDate, 'yyyy-MM-dd HH:mm:ss') + ' PST'
+}
 
 export const useStocksStore = defineStore({
   id: 'stock',
   state: () => ({
-    myStocks: [] as stockObjProps[],
+    myTransactions: [] as stockObjProps[],
     marketPrices: [] as marketPriceObjProps[]
   }),
   getters: {
@@ -16,22 +22,20 @@ export const useStocksStore = defineStore({
   },
   actions: {
     buyStock(stock: stockObjProps) {
-      this.myStocks.push(stock)
-      localStorage.setItem('MyPortfolio', JSON.stringify(this.myStocks))
+      stock.boughtAt = getFormattedDate()
+      this.myTransactions.push(stock)
+      localStorage.setItem('MyPortfolio', JSON.stringify(this.myTransactions))
     },
     async getTodaysPrices() {
-      console.log('Inside of getTodaysPrices')
       const marketPrices: marketPriceObjProps[] = []
-      console.log('myStocks :', this.myStocks)
-      for (const stock of this.myStocks) {
+      for (const stock of this.myTransactions) {
         try {
           const response = await api2.getStockNewPrice(stock.name)
-          console.log(response)
           if (response && response.data && response.data.c !== undefined) {
             const marketPriceObj: marketPriceObjProps = {
               name: stock.name,
               currentPrice: response.data.c,
-              currentDate: new Date().toISOString()
+              currentDate: getFormattedDate()
             }
             marketPrices.push(marketPriceObj)
           }
@@ -43,22 +47,16 @@ export const useStocksStore = defineStore({
       localStorage.setItem('MarketPrices', JSON.stringify(this.marketPrices))
     },
     initialize() {
-      const savedStocks = localStorage.getItem('MyPortfolio')
-      if (savedStocks) {
-        const parsedStocks = JSON.parse(savedStocks)
-        for (let i = 0; i < parsedStocks.length; i++) {
-          this.myStocks.push(parsedStocks[i])
-        }
-        console.log('Intialized stocks', this.myStocks)
+      const savedTransactions = localStorage.getItem('MyPortfolio')
+      if (savedTransactions) {
+        const parsedTransactions = JSON.parse(savedTransactions)
+        this.myTransactions.push(...parsedTransactions)
       }
 
       const savedMarketPrices = localStorage.getItem('MarketPrices')
       if (savedMarketPrices) {
         const parsedPrices = JSON.parse(savedMarketPrices)
-        for (let i = 0; i < parsedPrices.length; i++) {
-          this.marketPrices.push(parsedPrices[i])
-        }
-        console.log(savedMarketPrices)
+        this.marketPrices.push(...parsedPrices)
       }
     }
   }
