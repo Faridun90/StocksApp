@@ -57,6 +57,7 @@ const fetchStock = async () => {
     loading.value = false
   }
 }
+//test
 
 const handleSelectChange = (event: Event) => {
   userInput.value = (event.target as HTMLSelectElement).value
