@@ -78,7 +78,7 @@ watch([myTransactions, marketPrices], () => {
   <div class="bg-black text-white flex flex-col py-10 mx-auto w-full h-screen items-center">
     <h1 class="text-4xl mb-10">My Portfolio</h1>
     <div>
-      <a href="/stocks">
+      <a href="/">
         <button class="border-2 rounded-md text-lg p-1 bg-green-400">Buy Stocks</button>
       </a>
     </div>
